@@ -24,9 +24,9 @@ jobs:
       # Bước 2: Tải Godot và Export Templates
       # Sử dụng một action cộng đồng phổ biến để làm việc này
       - name: Set up Godot
-        uses: abarichello/godot-ci@v1.2
+        uses: abarichello/godot-ci@4.4.1-stable
         with:
-          godot_version: '4.4' # Đảm bảo đúng phiên bản Godot bạn dùng
+          godot_version: '4.4.1' # Đảm bảo đúng phiên bản Godot bạn dùng
           download_export_templates: true
       
       # Bước 3: Build game cho nền tảng Web
