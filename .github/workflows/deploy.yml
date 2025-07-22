@@ -1,57 +1,35 @@
-name: Build and Deploy Godot Game to GitHub Pages
+name: Godot CI
 
-# Kích hoạt workflow khi có push lên nhánh 'main'
-# Hoặc có thể chạy thủ công từ tab Actions
 on:
   push:
-    branches: [ "main" ] # Thay "main" bằng "master" nếu bạn dùng tên nhánh cũ
-  workflow_dispatch:
-
-# Cấp quyền cho workflow để ghi vào GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+    branches: [ main ] # Thay 'main' bằng nhánh chính của bạn
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest # Chạy trên máy ảo Ubuntu mới nhất
+  export-web:
+    name: Web Export
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.4.1 # Docker image cho Godot 4.4.1
     steps:
-      # Bước 1: Lấy code từ repository về máy ảo
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      # Bước 2: Tải Godot và Export Templates
-      # Sử dụng một action cộng đồng phổ biến để làm việc này
-      - name: Set up Godot
-        uses: abarichello/godot-ci@4.4.1-stable
-        with:
-          godot_version: '4.4.1' # Đảm bảo đúng phiên bản Godot bạn dùng
-          download_export_templates: true
-      
-      # Bước 3: Build game cho nền tảng Web
+      - name: Setup Godot
+        run: |
+          mkdir -p ~/.local/share/godot/export_templates
+          mv /root/.local/share/godot/export_templates/4.4.1.stable ~/.local/share/godot/export_templates/4.4.1.stable
+
       - name: Build Web Export
-        # Tạo thư mục build để chứa kết quả
-        # Chạy lệnh export của Godot ở chế độ headless (không giao diện)
-        # "Web" là tên của Export Preset bạn đã tạo ở Bước 1
         run: |
-          mkdir -p build
-          godot --headless --export-release "Web" build/index.html
+          godot --headless --export-release "Web" ./build/web/index.html
+        env:
+          GODOT_VERSION: 4.4.1
 
-      # Bước 4 (Quan trọng): Sửa file HTML để chạy được trên GitHub Pages
-      # Godot 4 Web export yêu cầu header đặc biệt (COOP/COEP)
-      # Chúng ta sẽ thêm các header này vào file index.html vừa build xong
-      - name: Add Cross-Origin Isolation headers
-        run: |
-          sed -i 's/crossOrigin="anonymous"/crossOrigin="anonymous"\n\t\t\tcrossOriginIsolated: true/' build/index.html
-
-      # Bước 5: Upload các file đã build lên làm một "artifact" cho GitHub Pages
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./build
-
-      # Bước 6: Deploy artifact đó lên GitHub Pages
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/web
+          publish_branch: gh-pages # Nhánh để triển khai GitHub Pages
