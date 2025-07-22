@@ -2,7 +2,7 @@ name: Godot CI
 
 on:
   push:
-    branches: [ main ] # Thay 'main' bằng nhánh chính của bạn
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -11,7 +11,7 @@ jobs:
     name: Web Export
     runs-on: ubuntu-latest
     container:
-      image: barichello/godot-ci:4.4.1 # Docker image cho Godot 4.4.1
+      image: barichello/godot-ci:4.4.1
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -20,6 +20,9 @@ jobs:
         run: |
           mkdir -p ~/.local/share/godot/export_templates
           mv /root/.local/share/godot/export_templates/4.4.1.stable ~/.local/share/godot/export_templates/4.4.1.stable
+
+      - name: Create Build Directory
+        run: mkdir -p ./build/web
 
       - name: Build Web Export
         run: |
@@ -32,4 +35,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build/web
-          publish_branch: gh-pages # Nhánh để triển khai GitHub Pages
+          publish_branch: gh-pages
