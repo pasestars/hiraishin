@@ -30,10 +30,18 @@ jobs:
         env:
           GODOT_VERSION: 4.4.1
 
+      - name: List Build Directory
+        run: ls -la ./build/web
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build/web
           publish_branch: gh-pages
-          force_orphan: true # Thêm dòng này để tự động tạo nhánh gh-pages nếu chưa có
+          force_orphan: true
+          allow_empty_commit: false
+          keep_files: false
+          enable_jekyll: false
+          disable_nojekyll: false
+          exclude_assets: .github
