@@ -1,0 +1,13 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+*.translation
+*.remap
+
+# Exported game files
+# Chú ý: Chúng ta sẽ build các file này trên server, không cần đẩy lên repo
+build/
+export/
+
+# Personal files
+.vscode/

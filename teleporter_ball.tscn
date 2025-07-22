@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://c48kgrriyod4q"]
+
+[ext_resource type="Script" uid="uid://bmwv6v11mcvki" path="res://teleporter_ball.gd" id="1_tjvs2"]
+[ext_resource type="Texture2D" uid="uid://ycl5xpyw3206" path="res://icon.svg" id="2_jh8pu"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_81vw2"]
+radius = 13.0
+
+[node name="TeleporterBall" type="RigidBody2D"]
+collision_layer = 4
+collision_mask = 2
+contact_monitor = true
+max_contacts_reported = 1
+script = ExtResource("1_tjvs2")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("2_jh8pu")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_81vw2")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
